@@ -54,19 +54,25 @@ function makeBuilder<T>(
         generator,
         _.negate(_.isFunction)
       );
-      return _.mapValues(
+      let full = { ...scalars };
+      const built = _.mapValues(
         generator,
         (value: any, key: string) => {
           if (
             typeof value === "function"
           ) {
+            console.log(
+              "building something"
+            );
             return value({
-              self: scalars
+              self: full
             }).build();
           }
           return value;
         }
       );
+      Object.assign(full, built);
+      return full;
     }
   });
 }
@@ -75,7 +81,7 @@ const ActivityBuilder = makeBuilder<
   Activity
 >({
   defaults: () => ({
-    uid: "123",
+    uid: "123" + Math.random(),
     section: ({
       self
     }: {
@@ -97,7 +103,7 @@ const SectionBuilder = makeBuilder<
   Section
 >({
   defaults: () => ({
-    uid: "456",
+    uid: "456" + Math.random(),
     activity: ({
       self
     }: {
@@ -106,7 +112,7 @@ const SectionBuilder = makeBuilder<
       (registry.getBuilder(
         "activity"
       ) as Builder<Activity>)({
-        sections: [self]
+        section: self
       })
   })
 });
@@ -117,3 +123,6 @@ registryStore[
 
 const activity = ActivityBuilder().build();
 console.log({ activity });
+
+const section = SectionBuilder().build();
+console.log({ section });
