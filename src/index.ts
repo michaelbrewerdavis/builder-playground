@@ -9,25 +9,6 @@ interface Generator<T> {
   build: () => T;
 }
 
-type X = {  
-  activity: Activity;
-  section: Section;
-};
-
-type F = {
-  [k in keyof X as `get${Capitalize<string & k>}`]: () => X[k]
-};
-
-const f: F = {
-  getActivity: () => ({
-    uid: "4",
-    isOngoingWeekly: false
-  }),
-  getSection: () => ({ uid: "3" })
-};
-
-console.log(f);
-
 type Builder<T> = (
   params?: any
 ) => Generator<T>;
